@@ -1,0 +1,20 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+.labels{
+    border: 2px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    margin-top: 5px;
+    padding-top: 3px;
+    height: 320px;
+}
+.reg{
+    text-align: center;
+    margin-top: 3px;
+}
+.reg1{text-align: center;}

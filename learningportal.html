@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Portal</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f4f4;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#333;
+}
+
+video{
+    width:100%;
+    max-width: 800px;
+    height: 450px;;
+    border-radius:10px;
+}
+
+button{
+    background:#007bff;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:5px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+ul{
+    list-style:none;
+    padding:0;
+}
+
+li{
+    background:#f0f0f0;
+    margin:8px 0;
+    padding:10px;
+    border-radius:5px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.delete-btn{
+    background:red;
+    padding:5px 10px;
+}
+
+.progress{
+    margin-top:15px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Student Learning Portal</h1>
+
+<video id="videoPlayer" controls>
+    <source src="student video.mp4" type="video/mp4">
+</video>
+
+<br>
+
+<button onclick="addBookmark()">Add Bookmark</button>
+
+<div class="progress">
+Continue Watching Progress Saved Automatically
+</div>
+
+<h2>Bookmarks</h2>
+
+<ul id="bookmarkList"></ul>
+
+</div>
+
+<script>
+
+const video=document.getElementById("videoPlayer");
+
+window.onload=()=>{
+
+let savedTime=localStorage.getItem("lastTime");
+
+if(savedTime){
+video.currentTime=savedTime;
+}
+
+displayBookmarks();
+};
+
+video.addEventListener("timeupdate",()=>{
+
+localStorage.setItem(
+"lastTime",
+video.currentTime
+);
+
+});
+
+function addBookmark(){
+
+let bookmarks=
+JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+let name=prompt("Enter Bookmark Name");
+
+if(!name){
+name="Bookmark "+(bookmarks.length+1);
+}
+
+bookmarks.push({
+name:name,
+time:video.currentTime
+});
+
+localStorage.setItem(
+"bookmarks",
+JSON.stringify(bookmarks)
+);
+
+displayBookmarks();
+}
+
+function displayBookmarks(){
+
+let bookmarks=
+JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+let list=document.getElementById("bookmarkList");
+
+list.innerHTML="";
+
+bookmarks.forEach((bookmark,index)=>{
+
+let li=document.createElement("li");
+
+let text=document.createElement("span");
+
+text.innerText=
+bookmark.name+" - "+formatTime(bookmark.time);
+
+text.onclick=()=>{
+
+video.currentTime=bookmark.time;
+video.play();
+
+};
+
+let del=document.createElement("button");
+
+del.innerText="Delete";
+
+del.className="delete-btn";
+
+del.onclick=(e)=>{
+
+e.stopPropagation();
+
+deleteBookmark(index);
+
+};
+
+li.appendChild(text);
+li.appendChild(del);
+
+list.appendChild(li);
+
+});
+}
+
+function deleteBookmark(index){
+
+let bookmarks=
+JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+bookmarks.splice(index,1);
+
+localStorage.setItem(
+"bookmarks",
+JSON.stringify(bookmarks)
+);
+
+displayBookmarks();
+}
+
+function formatTime(seconds){
+
+let mins=Math.floor(seconds/60);
+
+let secs=Math.floor(seconds%60);
+
+if(secs<10){
+secs="0"+secs;
+}
+
+return mins+":"+secs;
+}
+
+document.addEventListener(
+'contextmenu',
+e=>e.preventDefault()
+);
+
+document.addEventListener(
+'keydown',
+function(e){
+
+if(e.key==="PrintScreen"){
+
+alert(
+"Screenshot detection attempted!"
+);
+
+}
+}
+);
+
+</script>
+
+</body>
+</html>
